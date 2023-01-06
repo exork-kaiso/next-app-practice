@@ -223,7 +223,7 @@ width と height の Props は、ソース画像と同じアスペクト比の�
 
 pages/index.jsファイルを例にとると、 <Head>という React Component を使うと、<head>要素を変更することができる。
 
-<Head> Component は、 next/head もうールからインポートして使う。
+<Head> Component は、 next/head モジュールからインポートして使う。
 
 `
 import Head from 'next/head'
@@ -234,3 +234,43 @@ import Head from 'next/head'
   <title>First Post</title>
 </Head>
 `
+
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/third-party-javascript "")
+
+サードパーティ製スクリプトは、分析、広告などゼロから記述する必要のない新しい機能をサイトに導入するために使う。
+
+できるだけ早くロードして実行する必要があるスクリプトは、<Head> Component 内に追加する。
+
+<Head> Component 内にそのままスクリプトの読み込みを記述すると、他のJavascriptコードに対していつ読み込まれるか分からない上、スクリプトの読み込みに問題があった場合にページの読み込みに影響を与える恐れがある。
+
+サードパーティ製スクリプトを読み込む場合、next/script モジュールをインポートしてから使う。
+
+`
+import Script from 'next/script';
+`
+
+next/script モジュールは、<script> 要素の拡張機能です。
+
+<Script> Component は、<Head> Component の外に記述する。
+
+`
+<Script
+  src="https://connect.facebook.net/en_US/sdk.js"
+  strategy="lazyOnload"
+  onLoad={() =>
+    console.log(`script loaded correctly, window.FB has been populated`)
+  }
+/>
+`
+
+Strategyプロパティは、サードパーティ製スクリプトがどのタイミングでロードされるかを指定する。lazyOnload は、ブラウザのアイドル中にスクリプトを遅延ロードするように指定する。
+
+onLoad は、サードパーティ製スクリプトが読み込まれた直後に実行するJavascriptコード。
+
+※ sdk.js の読み込みは検証後に必ず削除する。
+
+最初のNext.jsアプリを作成するセクション終了まで、あと30ページ程度。
+検索エンジン最適化セクションは、29ページ。
+TypeScriptセクションは、3ページ。
+
+
