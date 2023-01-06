@@ -164,3 +164,73 @@ Next.js は、（1）コード分割、（2）クライアントサイドナビ�
 
 Next.js では、 CSSとSassがサポートされている。
 Next.js では、画像や<head>内に記述されるページのメタデータも処理することができる。
+
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/setup "")
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/assets "")
+
+Next.js では、publicディレクトリ内に画像などの静的アセットを入れることができる。
+
+静的アセットは、アプリケーションのルートから指定する。
+
+publicディレクトリには、画像ファイルのほか、robots.txt や Google のサイト所有権の為のファイルを入れます。
+
+1. プロフィール用のjpg画像（400x400）をprofile.jpgという名前で用意する。
+2. publicディレクトリ以下に、imagesディレクトリをつくる。
+3. imagesディレクトリ内に、profile.jpgを入れる。
+4. ページ生成用のJavascriptファイル内で、以下のように画像を呼び出す。
+
+`
+<img src="/images/profile.jpg" alt="Your Name" />
+`
+
+画像の表示に伴う以下のような処理は手動で行う必要がある。
+（1）レスポンシブ用画像の生成
+（2）サードパーティ製ツールやライブラリを使った画像の最適化
+（3）ビューポートに入った時だけ画像を読み込む処理
+
+next/image は、HTMLのimg要素の拡張機能です。
+
+Next.js は、デフォルトで画像最適化機能をサポートしているので、WebPフォーマットでの画像リサイズ、最適化、配信を行うことができ、小さなデバイスに大きな画像を配信することを避けることができる。
+
+Next.js は、将来的な画像フォーマットを自動で採用し、サポートしているブラウザに提供することもできる。
+
+外部データソースによってホストされている画像に対しても、画像の最適化をかけることができる。
+
+Next.js は、ビルド時に画像を最適化するのではなく、ユーザーからのリクエスト時にオンデマンドで画像を最適化するので、保持している画像量によってビルド時間が増えることはない。
+
+画像は、ビューポートに入った時に読み込まれる（遅延ロード）ので、ビューポート外にある画像によって、ページ速度が遅くなることはない。
+
+画像は、Core Web Vital の Cumulative Layout Shift を回避するようにレンダリングされる。
+
+Component として画像を呼び出す時は、以下のように記述する。
+
+`
+import Image from 'next/image';
+
+const YourComponent = () => (
+  <Image
+    src="/images/profile.jpg" // Route of the image file
+    height={144} // Desired size with correct aspect ratio
+    width={144} // Desired size with correct aspect ratio
+    alt="Your Name"
+  />
+);
+`
+
+width と height の Props は、ソース画像と同じアスペクト比のレンダリングサイズを指定する。
+
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/metadata "")
+
+pages/index.jsファイルを例にとると、 <Head>という React Component を使うと、<head>要素を変更することができる。
+
+<Head> Component は、 next/head もうールからインポートして使う。
+
+`
+import Head from 'next/head'
+`
+
+`
+<Head>
+  <title>First Post</title>
+</Head>
+`
