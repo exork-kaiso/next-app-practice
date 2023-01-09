@@ -273,4 +273,192 @@ onLoad は、サードパーティ製スクリプトが読み込まれた直後�
 検索エンジン最適化セクションは、29ページ。
 TypeScriptセクションは、3ページ。
 
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/css-styling "")
+
+stylesディレクトリにスタイルシートが生成される。
+stylesディレクトリには、グローバルスタイルシートとCSSモジュールが含まれている。
+
+CSSモジュールを使うと、CSSをローカルにスコープできるので、クラス名の衝突を気にすることなく、異なるファイル名で同じCSSクラス名を使うことができる。
+
+Next.js アプリケーションでは、（1）Sass、（2）Tailwind CSS のような Post CSS ライブラリ、（3）styled-jsx、styled-components、emotionなどの CSS-in-JSライブラリを使うことができる。
+
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/layout-component "")
+
+Layout Component は、全ページで共有される。
+
+作業フォルダ直下に、 components ディレクトリをつくり、その中に layout.js ファイルをつくる。
+
+`
+mkdir components
+cd components
+touch layout.js
+`
+
+layout.js ファイルに以下の記述を追加する。
+
+`
+export default function Layout({ children }) {
+  return <div>{children}</div>;
+}
+`
+
+pages/posts/first-post.js ファイルに、Layoutコンポーネントをインポートし、そのコンポーネントを一番外側のコンポーネントにする。
+
+`
+import Head from 'next/head'
+import Link from 'next/link';
+import Image from 'next/image';
+import Script from 'next/script';
+import Layout from '../../components/layout';
+
+export default function FirstPost() {
+  return (
+  <Layout>
+    <Head>
+      <title>First Post</title>
+    </Head>
+    <h1>First Post</h1>
+    <h2>
+      <Link href="/">Back to home</Link>
+    </h2>
+    <Image
+      src="/images/profile.jpg"
+      height={144}
+      width={144}
+      alt="Your Name"
+    />
+  </Layout>
+  );
+}
+`
+
+Layoutコンポーネントにスタイルを追加するには、ReactコンポーネントでCSSファイルをインポートできる、CSS Modules を使う。
+
+※ CSS Modules を使うには、ファイル末尾を .module.css に設定する必要がある。
+
+componentsディレクトリに、layout.module.css ファイルをつくる。
+
+`
+cd components
+touch layout.module.css
+`
+
+layout.module.cssファイルに、以下の記述を追加する。
+
+`
+.container {
+  max-width: 36rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+`
+
+layoutjs ファイル内でコンテナクラスを使うには、CSSファイルをインポートし、扱いやすいように名前をつける。
+
+ここでは、styles という名前をつけた。
+
+`
+import styles from './layout.module.css';
+`
+
+layout.jsファイルのクラスに名前をつけるために、内容を以下の記述に差し替える。
+ここでは、container というクラス名をつけた。
+
+`
+export default function Layout({ children }) {
+  return <div className={styles.container}>{children}</div>;
+}
+`
+
+ブラウザで生成したHTMLを確認すると、 container というクラス名をつけたつもりが、以下のような記述になっている。
+
+`
+<div class="layout_container__fbLkO"></div>
+`
+CSS Modules は、指定したクラス名からユニークなクラス名を自動生成し、クラス名の衝突を避けている。
+
+Next.js のコード分割機能はCSSモジュールでも有効なため、各ページに読み込まれるCSSが最小限になるようにバンドルサイズを小さくする。
+
+CSS モジュールは、ビルド時にJavascriptバンドルから抽出されて、cssファイルを生成し、Next.jsによって自動的にロードされる。
+
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/global-styles "")
+
+CSS モジュールは、コンポーネントのスタイルに有効。
+
+すべてのページに適用させたいスタイルがある場合も、Next.js はサポートしている。
+
+すべてのページに適用させたいスタイルシートは、pagesディレクトリに_app.js ファイルをつくる。
+
+※ pages/_app.js ファイル以外に、グローバルCSS（すべてのページに適用させたいスタイル）をインポートすることはできない。
+
+※ グローバルCSSは、どこに配置しても問題なく、どんな名前でも使うことができる。
+
+`
+touch pages/_app.js
+`
+
+pages/_app.js ファイルに以下の記述を追加する。
+
+`
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+`
+
+_app.js ファイルは、アプリケーションの全ページの最上位要素になるReact Component をエクスポートする。
+
+この最上位要素を使うことでページ遷移しても保持される State を使ったり、すべてのページに適用させたいスタイルを追加することができる。
+
+※ pages\_app.js ファイルを追加した場合、開発サーバを再起動する必要がある。
+
+`
+npm run dev
+`
+
+stylesディレクトリをつくり、global.cssファイルをつくる。
+
+`
+mkdir styles
+touch styles/global.css
+`
+
+styles/global.cssファイルに以下の記述を追加する。
+
+`
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu,
+    Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+`
+
+pages/_app.js ファイルに記述を追加し、styles/global.cssファイルをインポートする。
+
+`
+import '../styles/global.css';
+`
+
+pages/_app.js ファイルにインポートされたスタイルは、アプリケーションのすべてのページにグローバルに適用される。
 
