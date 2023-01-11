@@ -462,3 +462,307 @@ import '../styles/global.css';
 
 pages/_app.js ファイルにインポートされたスタイルは、アプリケーションのすべてのページにグローバルに適用される。
 
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/polishing-layout "")
+
+レイアウトとスタイルをポリッシュするために、components/layout.module.css を編集する。
+
+`
+.container {
+  max-width: 36rem;
+  padding: 0 1rem;
+  margin: 3rem auto 6rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.backToHome {
+  margin: 3rem 0 0;
+}
+`
+
+複数のコンポーネントで再利用できるスタイルシート utils.module.css をつくる。
+
+`
+touch style/utils.module.css
+`
+
+style/utils.module.css に以下の記述を追加する。
+
+`
+.heading2Xl {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+  margin: 1rem 0;
+}
+
+.headingXl {
+  font-size: 2rem;
+  line-height: 1.3;
+  font-weight: 800;
+  letter-spacing: -0.05rem;
+  margin: 1rem 0;
+}
+
+.headingLg {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  margin: 1rem 0;
+}
+
+.headingMd {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.borderCircle {
+  border-radius: 9999px;
+}
+
+.colorInherit {
+  color: inherit;
+}
+
+.padding1px {
+  padding-top: 1px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  margin: 0 0 1.25rem;
+}
+
+.lightText {
+  color: #666;
+}
+`
+
+上記ユーティリティクラスは、アプリケーション全体で再利用することができ、styles/global.css でユーティリティクラスを使うこともできる。
+
+components/layout.js ファイルの記述を以下のように変更する。
+
+`
+import Head from 'next/head';
+import Image from 'next/image';
+import styles from './layout.module.css';
+import utilStyles from '../styles/utils.module.css';
+import Link from 'next/link';
+
+const name = 'Your Name';
+export const siteTitle = 'Next.js Sample Website';
+
+export default function Layout({ children, home }) {
+  return (
+    <div className={styles.container}>
+      <Head>
+        <link rel="icon" href="/favicon.ico" />
+        <meta
+          name="description"
+          content="Learn how to build a personal website using Next.js"
+        />
+        <meta
+          property="og:image"
+          content={`https://og-image.vercel.app/${encodeURI(
+            siteTitle,
+          )}.png?theme=light&md=0&fontSize=75px&images=https%3A%2F%2Fassets.vercel.com%2Fimage%2Fupload%2Ffront%2Fassets%2Fdesign%2Fnextjs-black-logo.svg`}
+        />
+        <meta name="og:title" content={siteTitle} />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
+      <header className={styles.header}>
+        {home ? (
+          <>
+            <Image
+              priority
+              src="/images/profile.jpg"
+              className={utilStyles.borderCircle}
+              height={144}
+              width={144}
+              alt=""
+            />
+            <h1 className={utilStyles.heading2Xl}>{name}</h1>
+          </>
+        ) : (
+          <>
+            <Link href="/">
+              <Image
+                priority
+                src="/images/profile.jpg"
+                className={utilStyles.borderCircle}
+                height={108}
+                width={108}
+                alt=""
+              />
+            </Link>
+            <h2 className={utilStyles.headingLg}>
+              <Link href="/" className={utilStyles.colorInherit}>
+                {name}
+              </Link>
+            </h2>
+          </>
+        )}
+      </header>
+      <main>{children}</main>
+      {!home && (
+        <div className={styles.backToHome}>
+          <Link href="/">← Back to home</Link>
+        </div>
+      )}
+    </div>
+  );
+}
+`
+
+メタタグを追記し、ページの内容を説明しています。
+- description
+- og:image
+- og:title
+- twitter:card
+
+homeの値によって、分岐を行う記述を追加しました。
+priority属性でプリロードされる画像を追加しました。
+
+pages/index.jsファイルの記述を以下のように変更する。
+
+`
+import Head from 'next/head';
+import Layout, { siteTitle } from '../components/layout';
+import utilStyles from '../styles/utils.module.css';
+
+export default function Home() {
+  return (
+    <Layout home>
+      <Head>
+        <title>{siteTitle}</title>
+      </Head>
+      <section className={utilStyles.headingMd}>
+        <p>[Your Self Introduction]</p>
+        <p>
+          (This is a sample website - you’ll be building a site like this on{' '}
+          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
+        </p>
+      </section>
+    </Layout>
+  );
+}
+`
+
+[参考サイト](https://nextjs.org/learn/basics/assets-metadata-css/styling-tips "")
+
+clsxライブラリを使うと、クラス名を簡単に切り替えることができる。
+npm や yarn によって、インストールすることができる。
+
+`
+npm install clsx
+`
+
+clsxライブラリの用例：
+success もしくは、 error という type を受けつける Alertコンポーネントをつくり、 type:success の場合はテキストを緑色に、 type:error の場合はテキストを赤色にしたい。
+
+styles/alert.module.cssファイルをつくる。
+
+`
+touch styles/alert.module.css
+`
+
+styles/alert.module.cssファイルに以下の記述を追加する。
+
+`
+.success {
+  color: green;
+}
+.error {
+  color: red;
+}
+`
+
+ここで、clsx は以下のように記述して使う。
+
+`
+import styles from './alert.module.css';
+import { clsx } from 'clsx';
+
+export default function Alert({ children, type }) {
+  return (
+    <div
+      className={clsx({
+        [styles.success]: type === 'success',
+        [styles.error]: type === 'error',
+      })}
+    >
+      {children}
+    </div>
+  );
+}
+`
+
+Next.js は、何も設定しなければ PostCSSを使ってCSSをコンパイルする。
+PostCSSの設定をカスタマイズするには、postcss.config.js ファイルをつくる。
+postcss.config.js は、Tailwind CSS のようなライブラリを使っている場合に有効です。
+
+Tailwind CSS をインストールする。
+
+`
+npm install -D tailwindcss autoprefixer postcss
+`
+
+postcss.config.jsファイルをつくる。
+
+`
+touch postcss.config.js
+`
+
+postcss.config.jsファイルに以下の記述を追加する。
+
+`
+// postcss.config.js
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+`
+
+tailwind.config.jsファイルをつくる。
+
+`
+touch tailwind.config.js
+`
+
+tailwind.config.jsファイルに以下の記述を追加する。
+
+tailwind CSSでは、contentオプションでコンテンツのソースを指定して設定することが推奨される。
+
+`
+// tailwind.config.js
+module.exports = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+    // For the best performance and to avoid false positives,
+    // be as specific as possible with your content configuration.
+  ],
+};
+`
+
+Next.js では、npm で Sass をインストールすることで、.scss と .sass の拡張子を使ってSassをインポートすることができる。
+
+コンポーネントに適用する Sass は、CSS Modules と .module.scss もしくは、 .module.sass という拡張子で使うことができる。
+
+npm で sass をインストールする。
+
+`
+npm install -D sass
+`
+
