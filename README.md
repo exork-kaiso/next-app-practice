@@ -766,3 +766,45 @@ npm で sass をインストールする。
 npm install -D sass
 `
 
+[参考サイト](https://nextjs.org/learn/basics/data-fetching "")
+
+- Next.jsのプリレンダリング機能（SSGとSSR）
+- 静的生成におけるデータの有無
+- getStaticProps
+
+[参考サイト](https://nextjs.org/learn/basics/data-fetching/setup "")
+
+作業スペースを用意する。
+
+`
+mkdir workspace-02
+cd workspace-02
+npx create-next-app@latest nextjs-blog --use-npm --example "https://github.com/vercel/next-learn/tree/master/basics/data-fetching-starter"
+`
+
+作業スペースが挙動することを確認する。
+
+`
+cd nextjs-blog
+npm run dev
+`
+
+http://localhost:3000/ へアクセスし、、ページが表示されたら起動の成功。
+
+public/images/profile.jpgファイルを更新して、プロフィール画像を更新することができる。
+components/layout.jsファイルの const name を更新して、名前を更新することができる。
+pages/index.jsファイルの<p></p>を更新して、自己紹介を更新することができる。
+
+[参考サイト](https://nextjs.org/learn/basics/data-fetching/pre-rendering "")
+
+Next.js の重要な概念のひとつに、プリレンダリングがある。
+
+デフォルトでは、Next.jsはすべてのページをプリレンダリングする。→ Next.js は予め各ページのHTMLを生成する。
+プリレンダリングは、パフォーマンスとSEOを向上させる。
+
+プリレンダリングで生成された各HTMLは、そのページに必要な最低限のJavascriptと関連付けられる。
+プリレンダリングされたページをブラウザが読み込むと、Javascriptが実行され、ページが完全にインタラクティブになる。（このプロセスをハイドレーションと呼ぶ。）
+
+Javascriptを無効にすることで、プリレンダリングの挙動を確認することができる。
+Next.jsを使わないプレーンなReactアプリの場合、プリレンダリングがないため、Javascriptを無効にするとアプリが表示されなくなる。
+
